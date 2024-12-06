@@ -1,0 +1,7 @@
+AGE_THRESHOLD=1
+ 
+echo "Snapshots older than $AGE_THRESHOLD day(s):"
+aws ec2 describe-snapshots --query 'Snapshots[?StartTime<=`date -d "-'$AGE_THRESHOLD' days" +"%Y-%m-%dT%H:%M:%S"`].SnapshotId'
+ 
+echo "Deleting snapshots older than $AGE_THRESHOLD day(s):"
+aws ec2 delete-snapshot --snapshot-id $(aws ec2 describe-snapshots --query 'Snapshots[?StartTime<=`date -d "-'$AGE_THRESHOLD' days" +"%Y-%m-%dT%H:%M:%S"`].SnapshotId')
