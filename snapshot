@@ -1,0 +1,14 @@
+
+
+REGION="eu-north-1"
+
+CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+SNAPSHOTS=$(aws ec2 describe-snapshots --region $REGION --query "Snapshots[?StartTime<'$CURRENT_DATE' && StartTime<'$(date -u -d '1 day ago' +"%Y-%m-%dT%H:%M:%SZ")'].SnapshotId" --output text)
+
+for SNAPSHOT in $SNAPSHOTS; do
+    echo "Deleting snapshot: $SNAPSHOT"
+    aws ec2 delete-snapshot --region $REGION --snapshot-id $SNAPSHOT
+done
+
+echo "Deletion of snapshots older than 1 day is complete."
