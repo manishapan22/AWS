@@ -17,10 +17,10 @@ GITHUB_REPO = 'https://github.com/manishapan22/jenkins.git'  // Replace with you
             steps {
                 script {
                     // Make the script executable
-sh 'chmod +x snapshot-delete.sh'
+sh 'chmod +x snapshot.sh'
                     
                     // Run the snapshot management script
-sh './snapshot-delete.sh'
+sh './snapshot.sh'
                 }
             }
         }
