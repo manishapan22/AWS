@@ -1,14 +1,15 @@
-
-
+//#!/bin/bash
+ 
+//Set the region
 REGION="eu-north-1"
-
-CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-SNAPSHOTS=$(aws ec2 describe-snapshots --region $REGION --query "Snapshots[?StartTime<'$CURRENT_DATE' && StartTime<'$(date -u -d '1 day ago' +"%Y-%m-%dT%H:%M:%SZ")'].SnapshotId" --output text)
-
-for SNAPSHOT in $SNAPSHOTS; do
-    echo "Deleting snapshot: $SNAPSHOT"
-    aws ec2 delete-snapshot --region $REGION --snapshot-id $SNAPSHOT
-done
-
-echo "Deletion of snapshots older than 1 day is complete."
+ 
+//Set the age threshold (1 day)
+AGE_THRESHOLD=1
+ 
+//Display snapshots older than the threshold
+echo "Snapshots older than $AGE_THRESHOLD day(s) in $REGION region:"
+aws ec2 describe-snapshots --region $REGION --query 'Snapshots[?StartTime<=`date -d "-'$AGE_THRESHOLD' days" +"%Y-%m-%dT%H:%M:%S"`].SnapshotId'
+ 
+//Delete snapshots older than the threshold
+echo "Deleting snapshots older than $AGE_THRESHOLD day(s) in $REGION region:"
+aws ec2 delete-snapshot --region $REGION --snapshot-id $(aws ec2 describe-snapshots --region $REGION --query 'Snapshots[?StartTime<=`date -d "-'$AGE_THRESHOLD' days" +"%Y-%m-%dT%H:%M:%S"`].SnapshotId')
