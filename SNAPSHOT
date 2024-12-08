@@ -1,26 +1,17 @@
-#!/bin/bash
+param (
+    [int]$DaysOld = 7,
+    [string]$Region = "us-east-1"
+)
 
-# Variables
-DAYS_OLD=7  # Change this to the number of days
-REGION="eu-north-1"  # Change this to your AWS region
+$currentDate = Get-Date
+$cutoffDate = $currentDate.AddDays(-$DaysOld)
 
-# Get the current date in seconds since epoch
-CURRENT_DATE=$(date +%s)
+$snapshots = aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,StartTime:StartTime}' --output json --region $Region | ConvertFrom-Json
 
-# List all snapshots
-SNAPSHOTS=$(aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[*].{ID:SnapshotId,StartTime:StartTime}' --output text --region $REGION)
-
-# Loop through each snapshot
-echo "$SNAPSHOTS" | while read -r SNAPSHOT_ID START_TIME; do
-    # Convert the snapshot start time to seconds since epoch
-    SNAPSHOT_DATE=$(date -d "$START_TIME" +%s)
-
-    # Calculate the age of the snapshot in days
-    AGE=$(( (CURRENT_DATE - SNAPSHOT_DATE) / 86400 ))
-
-    # Delete the snapshot if it is older than the specified number of days
-    if [ $AGE -gt $DAYS_OLD ]; then
-        echo "Deleting snapshot $SNAPSHOT_ID which is $AGE days old."
-        aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID --region $REGION
-    fi
-done
+foreach ($snapshot in $snapshots) {
+    $snapshotDate = [DateTime]$snapshot.StartTime
+    if ($snapshotDate -lt $cutoffDate) {
+        Write-Output "Deleting snapshot $($snapshot.ID) which is $((New-TimeSpan -Start $snapshotDate -End $currentDate).Days) days old."
+        aws ec2 delete-snapshot --snapshot-id $snapshot.ID --region $Region
+    }
+}
