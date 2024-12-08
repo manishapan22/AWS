@@ -4,7 +4,7 @@ pipeline {
         stage('Clean Old Snapshots') {
             steps {
                 script {
-                    bat 'SNAPSHOT.py'
+                    bat 'AWS_SNAPSHOT.bat'
                 }
             }
         }
