@@ -1,0 +1,30 @@
+@echo off
+setlocal enabledelayedexpansion
+
+:: Variables
+set DAYS_OLD=7
+set REGION=us-east-1
+
+:: Get the current date in seconds since epoch
+for /f "tokens=2 delims==" %%i in ('wmic os get localdatetime /value') do set CURRENT_DATE=%%i
+set CURRENT_DATE=%CURRENT_DATE:~0,8%
+set /a CURRENT_DATE_EPOCH=(%date:~0,4%-1970)*31536000 + (%date:~5,2%-1)*2592000 + (%date:~8,2%)*86400
+
+:: Calculate cutoff date in seconds since epoch
+set /a CUTOFF_DATE_EPOCH=%CURRENT_DATE_EPOCH% - %DAYS_OLD%*86400
+
+:: List and delete old snapshots
+for /f "tokens=1,2" %%a in ('aws ec2 describe-snapshots --owner-ids self --query "Snapshots[*].{ID:SnapshotId,StartTime:StartTime}" --output text --region %REGION%') do (
+    set SNAPSHOT_ID=%%a
+    set START_TIME=%%b
+    set START_TIME=!START_TIME:~0,10!
+    set /a SNAPSHOT_DATE_EPOCH=(!START_TIME:~0,4!-1970)*31536000 + (!START_TIME:~5,2!-1)*2592000 + (!START_TIME:~8,2!)*86400
+
+    :: Delete the snapshot if it is older than the specified number of days
+    if !SNAPSHOT_DATE_EPOCH! lss %CUTOFF_DATE_EPOCH% (
+        echo Deleting snapshot !SNAPSHOT_ID! which is older than %DAYS_OLD% days.
+        aws ec2 delete-snapshot --snapshot-id !SNAPSHOT_ID! --region %REGION%
+    )
+)
+
+endlocal
