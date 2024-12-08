@@ -4,7 +4,7 @@ pipeline {
         stage('Clean Old Snapshots') {
             steps {
                 script {
-                    powershell 'SNAPSHOT.ps1'
+                    powershell '.\\SNAPSHOT.ps1'
                 }
             }
         }
