@@ -1,10 +1,18 @@
 pipeline {
     agent any
+    environment {
+        AWS_DEFAULT_REGION = 'eu-north-1' // Set your AWS region
+    }
     stages {
-        stage('Clean Old Snapshots') {
+        stage('Checkout') {
             steps {
-                script {
-                    powershell '.\\SNAPSHOT.ps1'
+                git 'https://github.com/manishapan22/AWS.git'
+            }
+        }
+        stage('List and Delete Snapshots') {
+            steps {
+                withAWS(credentials: 'aws-credentials') {
+                    sh 'python3 snapshot_cleanup.py'
                 }
             }
         }
