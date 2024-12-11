@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#!Set AWS region
+#!AWS region
 REGION="eu-north-1"
 
-#!Get snapshots older than 7 days and delete them
+#!Date threshold (snapshots older than 7 days)
 DATE_THRESHOLD=$(date -d "-1 days" +%Y-%m-%d)
 
 #!List and delete snapshots older than the threshold
