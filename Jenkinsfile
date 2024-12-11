@@ -15,7 +15,7 @@ pipeline {
                 withAWS(credentials: 'aws-credentials') {
                     // Run the Python script to delete snapshots
                     bat '''
-                    python delete_old_snapshots.py
+                    python delete_snapshots.sh
                     '''
                 }
             }
