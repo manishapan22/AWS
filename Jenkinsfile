@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        AWS_DEFAULT_REGION = 'eu-north-1' // Set your AWS region
+        AWS_DEFAULT_REGION = 'eu-north-1'  // Set your AWS region
     }
     stages {
         stage('Checkout') {
@@ -12,7 +12,8 @@ pipeline {
         stage('List and Delete Snapshots') {
             steps {
                 withAWS(credentials: 'aws-credentials') {
-                    bat 'python3 delete_old_snapshots.py'
+                    // Ensure Python is installed and accessible, using 'python' instead of 'python3' for Windows.
+                    bat 'python delete_old_snapshots.py'
                 }
             }
         }
