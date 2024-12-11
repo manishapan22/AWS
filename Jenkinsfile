@@ -1,9 +1,6 @@
 pipeline {
     agent any
     environment {
-        // AWS credentials for Jenkins job
-       // Add AWS secret key from Jenkins credentials
-        withAWS(credentials: 'aws-credentials')
         REGION = 'eu-north-1'  // Your AWS region
     }
     stages {
@@ -15,14 +12,14 @@ pipeline {
         }
         stage('Run Snapshot Deletion Script') {
             steps {
-                script {
-                    // Run the bash script to delete snapshots
-                    sh '''
-                    chmod +x delete_snapshots.sh
-                    ./delete_snapshots.sh
+                withAWS(credentials: 'aws-credentials') {
+                    // Run the Python script to delete snapshots
+                    bat '''
+                    python delete_old_snapshots.py
                     '''
                 }
             }
         }
     }
 }
+
