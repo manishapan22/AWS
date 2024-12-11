@@ -12,7 +12,7 @@ pipeline {
         stage('List and Delete Snapshots') {
             steps {
                 withAWS(credentials: 'aws-credentials') {
-                    sh 'python3 delete_old_snapshots.py'
+                    bat 'python3 delete_old_snapshots.py'
                 }
             }
         }
