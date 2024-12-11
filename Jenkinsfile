@@ -1,19 +1,26 @@
 pipeline {
     agent any
     environment {
-        AWS_DEFAULT_REGION = 'eu-north-1'  // Set your AWS region
+        // AWS credentials for Jenkins job
+       // Add AWS secret key from Jenkins credentials
+        withAWS(credentials: 'aws-credentials')
+        REGION = 'eu-north-1'  // Your AWS region
     }
     stages {
-        stage('Checkout') {
+        stage('Clone GitHub Repository') {
             steps {
-                git 'https://github.com/manishapan22/AWS.git'
+                // Clone the GitHub repository that contains the script
+                git 'https://github.com/manishapan22/AWS.git' // Replace with your GitHub repo URL
             }
         }
-        stage('List and Delete Snapshots') {
+        stage('Run Snapshot Deletion Script') {
             steps {
-                withAWS(credentials: 'aws-credentials') {
-                    // Ensure Python is installed and accessible, using 'python' instead of 'python3' for Windows.
-                    bat 'python delete_old_snapshots.py'
+                script {
+                    // Run the bash script to delete snapshots
+                    sh '''
+                    chmod +x delete_snapshots.sh
+                    ./delete_snapshots.sh
+                    '''
                 }
             }
         }
