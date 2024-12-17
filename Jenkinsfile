@@ -16,7 +16,7 @@ pipeline {
                     // Navigate to the directory where the script is located and run it
                     powershell '''
                     Set-Location -Path "C:\\Users\\manpan\\AWS"
-                    python delete_snapshots.py 9
+                    python delete_snapshots.py 8
                     '''
                 }
             }
