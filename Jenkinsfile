@@ -13,8 +13,8 @@ pipeline {
         stage('Run Snapshot Deletion Script') {
             steps {
                 withAWS(credentials: 'aws-credentials') {
-                    // Run the Python script to delete snapshots
-                    bat '''
+                    // Run the Python script to delete snapshots using PowerShell
+                    powershell '''
                     python delete_snapshots.py
                     '''
                 }
@@ -22,4 +22,3 @@ pipeline {
         }
     }
 }
-
