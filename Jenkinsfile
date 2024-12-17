@@ -13,8 +13,9 @@ pipeline {
         stage('Run Snapshot Deletion Script') {
             steps {
                 withAWS(credentials: 'aws-credentials') {
-                    // Run the Python script to delete snapshots using PowerShell
+                    // Navigate to the directory where the script is located and run it
                     powershell '''
+                    Set-Location -Path "C:\\Users\\manpan\\.jenkins\\workspace\\snapshot cleanup"
                     python delete_snapshots.py
                     '''
                 }
