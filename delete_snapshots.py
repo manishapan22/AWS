@@ -6,7 +6,7 @@ region = 'eu-north-1'
 ec2 = boto3.client('ec2', region_name=region)
 
 # Calculate the date threshold
-date_threshold = datetime.now() - timedelta(days=8)
+date_threshold = datetime.now() - timedelta(days=9)
 date_threshold_str = date_threshold.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 # Describe snapshots older than the threshold
