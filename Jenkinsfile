@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         REGION = 'eu-north-1'  // Your AWS region
+        PATH = "C:\Program Files\Python312" // Replace with your Python install path
     }
     stages {
         stage('Clone GitHub Repository') {
