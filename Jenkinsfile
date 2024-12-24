@@ -15,7 +15,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-credentials') {
                     // Navigate to the directory where the script is located and run it
-                    powershell '''
+                    bat '''
                     Set-Location -Path "C:\\Users\\manpan\\AWS"
                     python delete_snapshots.py 
                     '''
